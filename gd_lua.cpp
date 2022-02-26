@@ -1,5 +1,10 @@
 #include "gd_lua.h"
 
+// Reference:
+// ----------
+// 1. https://gist.github.com/kklouzal/ae1b99ceadc1b89845d63764c87b968a
+// 2. https://gist.github.com/Youka/2a6e69584672f7cb0331
+
 extern "C" {
 	#include "lua/luaconf.h"
 	#include "lua/lualib.h"
@@ -92,14 +97,14 @@ static int gd_loader(lua_State* state) {
 extern "C" void init_preloaders(lua_State *L);
 
 // These 2 macros helps us in constructing general metamethods.
-// We can use "lua" as a "Lua" pointer and arg1, arg2, ..., arg5 as Variants objects
+// We can use "lua" as a "GdLua" pointer and arg1, arg2, ..., arg5 as Variants objects
 // Check examples in createVector2Metatable
 #define LUA_LAMBDA_TEMPLATE(_f_) \
 	[] (lua_State* inner_state) -> int { \
-		lua_pushstring(inner_state,"__Lua"); \
+		lua_pushstring(inner_state, "__Lua"); \
 		lua_rawget(inner_state,LUA_REGISTRYINDEX); \
-		GdLua* lua = (GdLua*) lua_touserdata(inner_state,-1); \
-		lua_pop(inner_state,1); \
+		GdLua* lua = (GdLua*)lua_touserdata(inner_state, -1); \
+		lua_pop(inner_state, 1); \
 		Variant arg1 = lua->get_variant(1); \
 		Variant arg2 = lua->get_variant(2); \
 		Variant arg3 = lua->get_variant(3); \
@@ -107,10 +112,10 @@ extern "C" void init_preloaders(lua_State *L);
 		Variant arg5 = lua->get_variant(5); \
 		_f_ \
 	}
-#define LUA_METAMETHOD_TEMPLATE( lua_state , metatable_index , metamethod_name , _f_ ) \
-	lua_pushstring(lua_state,metamethod_name); \
-	lua_pushcfunction(lua_state,LUA_LAMBDA_TEMPLATE( _f_ )); \
-	lua_settable(lua_state,metatable_index-2);
+#define LUA_METAMETHOD_TEMPLATE(lua_state, metatable_index, metamethod_name, _f_ ) \
+	lua_pushstring(lua_state, metamethod_name); \
+	lua_pushcfunction(lua_state, LUA_LAMBDA_TEMPLATE( _f_ )); \
+	lua_settable(lua_state, metatable_index-2);
 
 // expose a GDScript function to lua
 void GdLua::expose_function(Object *instance, String function, String name) {
@@ -186,20 +191,20 @@ bool GdLua::lua_function_exists(String function_name) {
 	return type == LUA_TFUNCTION;
 }
 
-// doFile() will just load the file's text and call doString()
+// do_file() will just load the file's text and call doString()
 void GdLua::do_file(String fileName, bool protected_call, Object* callback_caller, String callback) {
 	_File file;
-	file.open(fileName,_File::ModeFlags::READ);
+	file.open(fileName, _File::ModeFlags::READ);
 	String code = file.get_as_text();
 	file.close();
-	do_string(code, protected_call , callback_caller , callback);
+	do_string(code, protected_call, callback_caller, callback);
 }
 
 // Called every line of lua that is ran
 void GdLua::line_hook(lua_State *L, lua_Debug *ar) {
 }
 
-// Run lua string in a thread if threading is enabled
+// Run lua string
 void GdLua::do_string(String code, bool protected_call, Object* callback_caller, String callback) {
 	run_lua(state, code, protected_call, callback_caller, callback, &executing);
 }
@@ -366,7 +371,7 @@ void GdLua::expose_constructors() {
 		if (argc == 0) {
 			lua->push_variant(Vector2());
 		} else {
-			lua->push_variant(Vector2(arg1.operator double(), arg2.operator double() ));
+			lua->push_variant(Vector2(arg1.operator double(), arg2.operator double()));
 		}
 		return 1;
 	}));
@@ -383,12 +388,12 @@ void GdLua::expose_constructors() {
 	}));
 	lua_setglobal(state, "godot.Vector3");
 
-	lua_pushcfunction(state,LUA_LAMBDA_TEMPLATE({
+	lua_pushcfunction(state, LUA_LAMBDA_TEMPLATE({
 		int argc = lua_gettop(inner_state);
 		if (argc == 3) {
-			lua->push_variant(Color( arg1.operator double(), arg2.operator double() , arg3.operator double()));
+			lua->push_variant(Color( arg1.operator double(), arg2.operator double(), arg3.operator double()));
 		} else if (argc == 4) {
-			lua->push_variant(Color( arg1.operator double(), arg2.operator double() , arg3.operator double() , arg4.operator double()));
+			lua->push_variant(Color( arg1.operator double(), arg2.operator double(), arg3.operator double(), arg4.operator double()));
 		} else {
 			lua->push_variant(Color());
 		}
@@ -396,10 +401,10 @@ void GdLua::expose_constructors() {
 	}));
 	lua_setglobal(state, "godot.Color");
 
-	lua_pushcfunction(state,LUA_LAMBDA_TEMPLATE({
+	lua_pushcfunction(state, LUA_LAMBDA_TEMPLATE({
 		int argc = lua_gettop(inner_state);
 		if (argc == 4) {
-			lua->push_variant(Rect2( arg1.operator double(), arg2.operator double() , arg3.operator double() , arg4.operator double()));
+			lua->push_variant(Rect2(arg1.operator double(), arg2.operator double(), arg3.operator double(), arg4.operator double()));
 		} else {
 			lua->push_variant(Rect2());
 		}
@@ -410,9 +415,9 @@ void GdLua::expose_constructors() {
 
 // Create metatable for Vector2 and saves it at LUA_REGISTRYINDEX with name "godot.Vector2"
 void GdLua::create_vector2_metatable() {
-	luaL_newmetatable(state , "godot.Vector2");
+	luaL_newmetatable(state, "godot.Vector2");
 
-	LUA_METAMETHOD_TEMPLATE(state , -1, "__index", {
+	LUA_METAMETHOD_TEMPLATE(state, -1, "__index", {
 		lua->push_variant(arg1.get(arg2));
 		return 1;
 	});
@@ -459,6 +464,11 @@ void GdLua::create_vector2_metatable() {
 			default:
 				return 0;
 		}
+	});
+
+	LUA_METAMETHOD_TEMPLATE(state, -1, "length", {
+		lua->push_variant(arg1.get(arg2));
+		return 1;
 	});
 
 	lua_pop(state, 1); // Stack is now unmodified
@@ -590,7 +600,7 @@ void GdLua::create_rect_metatable() {
 
 	LUA_METAMETHOD_TEMPLATE(state, -1, "__newindex", {
 		// We can't use arg1 here because we need to reference the userdata
-		((Variant*)lua_touserdata(inner_state,1))->set(arg2 , arg3);
+		((Variant*)lua_touserdata(inner_state, 1))->set(arg2 , arg3);
 		return 0;
 	});
 
@@ -626,7 +636,7 @@ int GdLua::lua_print(lua_State* state) {
 		String it_string;
 		switch( lua_type(state,n) ) {
 			case LUA_TUSERDATA: {
-				Variant var = *(Variant*) lua_touserdata(state,n);
+				Variant var = *(Variant*) lua_touserdata(state, n);
 				it_string = var.operator String();
 				break;
 			}
