@@ -33,30 +33,20 @@ Features
 - Expose GDScript functions to lua with a return value and up to 5 arguments.
 - Call lua functions from GDScript.
 - By default the lua print function is set to print to the GDEditor console. This can be changed by exposing your own print function as it will overwrite the existing one.
-- Basic types are passed as userdata (currently: Vector2, Vector3 and Color) with a useful metatable. This means you can do things like:  
+- Basic types are passed as userdata (currently: Vector2, Vector3, Rect2 and Color) with a useful metatable. This means you can do things like:
 ```lua
 local v1 = Vector2(1,2)
 local v2 = Vector2(100,100)
 print( v2.x ) -- "100"
-print( v1+v2 ) -- "(101,102)"
+print( v1 + v2 ) -- "(101,102)"
 change_my_sprite_color( Color(1,0,0,1) ) -- if "change_my_sprite_color" was exposed, in GDScript it will receive a Color variant.
 ```
 
 TODO
 -----
-- Add support to kill individual lua threads.
 - Add option to load specific lua librarys.
 - Methods for userdata types, i.e. `.length()` for Vector2
 - Object type passed as userdata? This probably should be optional. User should be careful with reference being freed
-
-Compiling
-------------
-  Please note this module was written for **Godot Version 3.2.3**
-- Start by cloning the Godot 3.2.3 [source](https://github.com/godotengine/godot/tree/3.2.3-stable) with this command `git clone https://github.com/godotengine/godot -b 3.2.3-stable`
-
-- Next clone this repository into the module folder inside the Godot source code.
-
-- Now you can follow the Godot build instructions on their [site](https://docs.godotengine.org/en/latest/development/compiling/).
 
 Examples
 ------------
@@ -64,7 +54,7 @@ Examples
 ```gdscript
 extends Node2D
 
-onready var lua = Lua.new()
+onready var lua = GdLua.new()
 
 func _ready():
 	lua.do_string("for i=1,10,1 do print('Hello lua!') end")
@@ -75,7 +65,7 @@ func _ready():
 ```gdscript
 extends Node2D
 
-onready var lua = Lua.new()
+onready var lua = GdLua.new()
 
 func _ready():
 	lua.do_file("user://luaFile.lua")
@@ -86,7 +76,7 @@ func _ready():
 ```gdscript
 extends Node2D
 
-onready var lua = Lua.new()
+onready var lua = GdLua.new()
 var test = "Hello lua!"
 
 func _ready():
@@ -99,7 +89,7 @@ func _ready():
 ```gdscript
 extends Node2D
 
-onready var lua = Lua.new()
+onready var lua = GdLua.new()
 
 func luaAdd(a, b):
 	return a + b
@@ -114,7 +104,7 @@ func _ready():
 ```gdscript
 extends Node2D
 
-onready var lua = Lua.new()
+onready var lua = GdLua.new()
 
 func _ready():
 	lua.do_file("user://luaFile.lua")
@@ -132,7 +122,7 @@ func _ready():
 ```gdscript
 extends Node2D
 
-onready var lua = Lua.new()
+onready var lua = GdLua.new()
 
 func luaCallBack(err):
 	print(err)
@@ -142,30 +132,6 @@ func _ready():
 ```
 <br />
 
-**Enable threading:**
-```gdscript
-extends Node2D
-
-onready var lua = Lua.new()
-
-
-func _ready():
-	lua.set_threaded(true)
-	lua.do_string("while true do print("The game will not freeze") end" )
-```
-<br />
-
-**Kill all lua threads:**
-```gdscript
-extends Node2D
-
-onready var lua = Lua.new()
-
-
-func _ready():
-	lua.do_string("while true do pass end")
-	lua.kill_all()
-```
 Contributing And Feature Requests
 ---------------
 All contributions are welcome, if you would like to contribute submit a PR.
