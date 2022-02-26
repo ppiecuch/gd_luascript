@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+Import("env")
+Import("env_modules")
+
+env_module = env_modules.Clone()
+env_module.Append(CPPPATH=["#modules/gdextensions", "."])
+env_module.Append(CPPDEFINES=["LUA_COMPAT_5_1"])
+
+sources = Glob("*.cpp") + Glob("lua/*.c") + Glob("extensions/*.c") + Glob("extensions/*.cpp")
+
+# Compile as a static library
+lib = env_module.Library("gd_luascript", sources)
+# Add the library as a dependency of the final executable
+env.Prepend(LIBS=[lib])
