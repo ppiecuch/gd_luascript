@@ -4,7 +4,7 @@ Import("env")
 Import("env_modules")
 
 env_module = env_modules.Clone()
-env_module.Append(CPPPATH=["#modules/gdextensions", "."])
+env_module.Append(CPPPATH=["#modules/gdextensions", "_tools/tolua-5.2.4/include", "."])
 env_module.Append(CPPDEFINES=["LUA_COMPAT_5_1"])
 
 sources = Glob("*.cpp") + Glob("lua/*.c") + Glob("extensions/*.c") + Glob("extensions/*.cpp")

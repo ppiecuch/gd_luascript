@@ -1,0 +1,75 @@
+// https://web.tecgraf.puc-rio.br/~celes/tolua/tolua-3.2.html
+
+$#include "core/variant.h"
+$#include "core/resource.h"
+$#include "core/math/vector2.h"
+$#include "core/math/vector3.h"
+$#include "core/math/rect2.h"
+$#include "servers/visual_server.h"
+
+$#include "godot_lua.h"
+
+$#define NinePatchAxisMode VisualServer::NinePatchAxisMode
+$#define NINE_PATCH_STRETCH VisualServer::NINE_PATCH_STRETCH
+$#define NINE_PATCH_TILE VisualServer::NINE_PATCH_TILE
+$#define NINE_PATCH_TILE_FIT VisualServer::NINE_PATCH_TILE_FIT
+
+module godot {
+	class Vector2 {
+		float length() const;
+		float length_squared() const;
+		Vector2(float p_x, float p_y);
+	};
+
+	typedef Vector2 Point2;
+
+	class Vector3 {
+		float length() const;
+		float length_squared() const;
+		Vector3(float p_x, float p_y, float p_z);
+	};
+
+	typedef Vector3 Point3;
+
+	class Rect2 {
+		Vector2 get_center() const;
+		float get_area() const;
+		Rect2(float p_x, float p_y, float p_width, float p_height);
+	};
+
+	class Color {
+		Color(float p_r, float p_g, float p_b, float p_a = 1.0);
+	};
+
+	enum NinePatchAxisMode {
+		NINE_PATCH_STRETCH,
+		NINE_PATCH_TILE,
+		NINE_PATCH_TILE_FIT
+	};
+
+	class VisualServer {
+		void canvas_item_add_line(RID p_item, const Point2 &p_from, const Point2 &p_to, const Color &p_color, float p_width = 1.0, bool p_antialiased = false);
+		void canvas_item_add_polyline(RID p_item, const Vector<Point2> &p_points, const Vector<Color> &p_colors, float p_width = 1.0, bool p_antialiased = false);
+		void canvas_item_add_multiline(RID p_item, const Vector<Point2> &p_points, const Vector<Color> &p_colors, float p_width = 1.0, bool p_antialiased = false);
+		void canvas_item_add_rect(RID p_item, const Rect2 &p_rect, const Color &p_color);
+		void canvas_item_add_circle(RID p_item, const Point2 &p_pos, float p_radius, const Color &p_color);
+		void canvas_item_add_texture_rect(RID p_item, const Rect2 &p_rect, RID p_texture, bool p_tile = false, const Color &p_modulate = Color(1, 1, 1), bool p_transpose = false, RID p_normal_map = RID(), RID p_mask = RID());
+		void canvas_item_add_texture_rect_region(RID p_item, const Rect2 &p_rect, RID p_texture, const Rect2 &p_src_rect, const Color &p_modulate = Color(1, 1, 1), bool p_transpose = false, RID p_normal_map = RID(), RID p_mask = RID(), bool p_clip_uv = false);
+		void canvas_item_add_nine_patch(RID p_item, const Rect2 &p_rect, const Rect2 &p_source, RID p_texture, const Vector2 &p_topleft, const Vector2 &p_bottomright, NinePatchAxisMode p_x_axis_mode = NINE_PATCH_STRETCH, NinePatchAxisMode p_y_axis_mode = NINE_PATCH_STRETCH, bool p_draw_center = true, const Color &p_modulate = Color(1, 1, 1), RID p_normal_map = RID(), RID p_mask = RID());
+		void canvas_item_add_primitive(RID p_item, const Vector<Point2> &p_points, const Vector<Color> &p_colors, const Vector<Point2> &p_uvs, RID p_texture, float p_width = 1.0, RID p_normal_map = RID(), RID p_mask = RID());
+		void canvas_item_add_polygon(RID p_item, const Vector<Point2> &p_points, const Vector<Color> &p_colors, const Vector<Point2> &p_uvs = Vector<Point2>(), RID p_texture = RID(), RID p_normal_map = RID(), RID p_mask = RID(), bool p_antialiased = false);
+		void canvas_item_add_triangle_array(RID p_item, const Vector<int> &p_indices, const Vector<Point2> &p_points, const Vector<Color> &p_colors, const Vector<Point2> &p_uvs = Vector<Point2>(), const Vector<int> &p_bones = Vector<int>(), const Vector<float> &p_weights = Vector<float>(), RID p_texture = RID(), int p_count = -1, RID p_normal_map = RID(), RID p_mask = RID(), bool p_antialiased = false, bool p_antialiasing_use_indices = false);
+		void canvas_item_add_mesh(RID p_item, const RID &p_mesh, const Transform2D &p_transform = Transform2D(), const Color &p_modulate = Color(1, 1, 1), RID p_texture = RID(), RID p_normal_map = RID(), RID p_mask = RID());
+		void canvas_item_add_multimesh(RID p_item, RID p_mesh, RID p_texture = RID(), RID p_normal_map = RID(), RID p_mask = RID());
+		void canvas_item_add_particles(RID p_item, RID p_particles, RID p_texture, RID p_normal_map = RID(), RID p_mask = RID());
+	};
+
+	module resources {
+	}
+
+	module sound {
+	}
+
+	RID get_canvas(lua_State *L);
+	VisualServer *get_vs();
+}

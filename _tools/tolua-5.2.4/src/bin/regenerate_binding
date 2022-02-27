@@ -1,0 +1,3 @@
+#!/bin/bash
+
+../../bin/tolua_lua -o toluabind.c tolua.pkg

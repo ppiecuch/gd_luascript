@@ -4,6 +4,7 @@
 #include "core/reference.h"
 #include "core/bind/core_bind.h"
 #include "scene/main/node.h"
+#include "./scene/2d/canvas_item.h"
 
 #include "lua/lua.h"
 
@@ -15,14 +16,8 @@ class GdLua : public Reference {
 	GDCLASS(GdLua, Reference);
 
 	lua_State *state;
+	CanvasItem *canvas;
 	bool executing;
-
-	void expose_constructors();
-
-	void create_vector2_metatable();
-	void create_vector3_metatable();
-	void create_color_metatable();
-	void create_rect_metatable();
 
 	static void handle_error(lua_State *L, int lua_error);
 

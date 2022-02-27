@@ -233,11 +233,7 @@
 ** ===================================================================
 */
 
-#ifdef __cplusplus
-#define LUA_API		extern "C"
-#else
 #define LUA_API		extern
-#endif
 
 /* more often than not the libs go together with the core */
 #define LUALIB_API	LUA_API
