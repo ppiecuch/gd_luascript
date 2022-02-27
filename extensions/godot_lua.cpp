@@ -33,17 +33,17 @@ LUALIB_API int luaopen_godot (lua_State* tolua_S);
 /* function to release collected object via destructor */
 #ifdef __cplusplus
 
-static int tolua_collect_RID (lua_State* tolua_S)
+static int tolua_collect_Vector2 (lua_State* tolua_S)
 {
- RID* self = (RID*) tolua_tousertype(tolua_S,1,0);
+ Vector2* self = (Vector2*) tolua_tousertype(tolua_S,1,0);
  tolua_release(tolua_S,self);
  delete self;
  return 0;
 }
 
-static int tolua_collect_Vector2 (lua_State* tolua_S)
+static int tolua_collect_RID (lua_State* tolua_S)
 {
- Vector2* self = (Vector2*) tolua_tousertype(tolua_S,1,0);
+ RID* self = (RID*) tolua_tousertype(tolua_S,1,0);
  tolua_release(tolua_S,self);
  delete self;
  return 0;
@@ -54,17 +54,17 @@ static int tolua_collect_Vector2 (lua_State* tolua_S)
 /* function to register type */
 static void tolua_reg_types (lua_State* tolua_S)
 {
- tolua_usertype(tolua_S,"Vector2");
  tolua_usertype(tolua_S,"Vector<Color>");
  tolua_usertype(tolua_S,"Vector<float>");
- tolua_usertype(tolua_S,"Rect2");
- tolua_usertype(tolua_S,"Vector<Point2>");
- tolua_usertype(tolua_S,"RID");
+ tolua_usertype(tolua_S,"Color");
+ tolua_usertype(tolua_S,"Vector2");
+ tolua_usertype(tolua_S,"Vector3");
  tolua_usertype(tolua_S,"Transform2D");
  tolua_usertype(tolua_S,"Vector<int>");
+ tolua_usertype(tolua_S,"Rect2");
+ tolua_usertype(tolua_S,"Vector<Point2>");
  tolua_usertype(tolua_S,"VisualServer");
- tolua_usertype(tolua_S,"Color");
- tolua_usertype(tolua_S,"Vector3");
+ tolua_usertype(tolua_S,"RID");
 }
 
 /* method: length of class  Vector2 */
@@ -347,6 +347,375 @@ static int tolua_godot_godot_Rect2_new00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'new'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: to_rgba32 of class  Color */
+static int tolua_godot_godot_Color_to_rgba3200(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'to_rgba32'",NULL);
+#endif
+ {
+  int tolua_ret = (int)  self->to_rgba32();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'to_rgba32'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: to_argb32 of class  Color */
+static int tolua_godot_godot_Color_to_argb3200(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'to_argb32'",NULL);
+#endif
+ {
+  int tolua_ret = (int)  self->to_argb32();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'to_argb32'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: to_abgr32 of class  Color */
+static int tolua_godot_godot_Color_to_abgr3200(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'to_abgr32'",NULL);
+#endif
+ {
+  int tolua_ret = (int)  self->to_abgr32();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'to_abgr32'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: to_rgba64 of class  Color */
+static int tolua_godot_godot_Color_to_rgba6400(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'to_rgba64'",NULL);
+#endif
+ {
+  int tolua_ret = (int)  self->to_rgba64();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'to_rgba64'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: to_argb64 of class  Color */
+static int tolua_godot_godot_Color_to_argb6400(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'to_argb64'",NULL);
+#endif
+ {
+  int tolua_ret = (int)  self->to_argb64();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'to_argb64'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: to_abgr64 of class  Color */
+static int tolua_godot_godot_Color_to_abgr6400(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'to_abgr64'",NULL);
+#endif
+ {
+  int tolua_ret = (int)  self->to_abgr64();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'to_abgr64'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: gray of class  Color */
+static int tolua_godot_godot_Color_gray00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'gray'",NULL);
+#endif
+ {
+  float tolua_ret = (float)  self->gray();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'gray'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: get_h of class  Color */
+static int tolua_godot_godot_Color_get_h00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'get_h'",NULL);
+#endif
+ {
+  float tolua_ret = (float)  self->get_h();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'get_h'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: get_s of class  Color */
+static int tolua_godot_godot_Color_get_s00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'get_s'",NULL);
+#endif
+ {
+  float tolua_ret = (float)  self->get_s();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'get_s'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: get_v of class  Color */
+static int tolua_godot_godot_Color_get_v00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const Color",0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const Color* self = (const Color*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'get_v'",NULL);
+#endif
+ {
+  float tolua_ret = (float)  self->get_v();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'get_v'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: set_hsv of class  Color */
+static int tolua_godot_godot_Color_set_hsv00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"Color",0,&tolua_err) || 
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) || 
+ !tolua_isnumber(tolua_S,3,0,&tolua_err) || 
+ !tolua_isnumber(tolua_S,4,0,&tolua_err) || 
+ !tolua_isnumber(tolua_S,5,1,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  Color* self = (Color*)  tolua_tousertype(tolua_S,1,0);
+  float p_h = ((float)  tolua_tonumber(tolua_S,2,0));
+  float p_s = ((float)  tolua_tonumber(tolua_S,3,0));
+  float p_v = ((float)  tolua_tonumber(tolua_S,4,0));
+  float p_alpha = ((float)  tolua_tonumber(tolua_S,5,1.0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'set_hsv'",NULL);
+#endif
+ {
+  self->set_hsv(p_h,p_s,p_v,p_alpha);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'set_hsv'.",&tolua_err);
+ return 0;
+#endif
+}
+
+/* method: with_alpha of class  Color */
+static int tolua_godot_godot_Color_with_alpha00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"Color",0,&tolua_err) || 
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) || 
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  Color* self = (Color*)  tolua_tousertype(tolua_S,1,0);
+  float p_alpha = ((float)  tolua_tonumber(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'with_alpha'",NULL);
+#endif
+ {
+  Color& tolua_ret = (Color&)  self->with_alpha(p_alpha);
+ tolua_pushusertype(tolua_S,(void*)&tolua_ret,"Color");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'with_alpha'.",&tolua_err);
  return 0;
 #endif
 }
@@ -1079,6 +1448,18 @@ LUALIB_API int luaopen_godot (lua_State* tolua_S)
  tolua_endmodule(tolua_S);
  tolua_cclass(tolua_S,"Color","Color","",NULL);
  tolua_beginmodule(tolua_S,"Color");
+ tolua_function(tolua_S,"to_rgba32",tolua_godot_godot_Color_to_rgba3200);
+ tolua_function(tolua_S,"to_argb32",tolua_godot_godot_Color_to_argb3200);
+ tolua_function(tolua_S,"to_abgr32",tolua_godot_godot_Color_to_abgr3200);
+ tolua_function(tolua_S,"to_rgba64",tolua_godot_godot_Color_to_rgba6400);
+ tolua_function(tolua_S,"to_argb64",tolua_godot_godot_Color_to_argb6400);
+ tolua_function(tolua_S,"to_abgr64",tolua_godot_godot_Color_to_abgr6400);
+ tolua_function(tolua_S,"gray",tolua_godot_godot_Color_gray00);
+ tolua_function(tolua_S,"get_h",tolua_godot_godot_Color_get_h00);
+ tolua_function(tolua_S,"get_s",tolua_godot_godot_Color_get_s00);
+ tolua_function(tolua_S,"get_v",tolua_godot_godot_Color_get_v00);
+ tolua_function(tolua_S,"set_hsv",tolua_godot_godot_Color_set_hsv00);
+ tolua_function(tolua_S,"with_alpha",tolua_godot_godot_Color_with_alpha00);
  tolua_function(tolua_S,"new",tolua_godot_godot_Color_new00);
  tolua_endmodule(tolua_S);
  tolua_constant(tolua_S,"NINE_PATCH_STRETCH",NINE_PATCH_STRETCH);

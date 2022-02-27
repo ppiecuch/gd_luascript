@@ -38,6 +38,18 @@ module godot {
 	};
 
 	class Color {
+		int to_rgba32() const;
+		int to_argb32() const;
+		int to_abgr32() const;
+		int to_rgba64() const;
+		int to_argb64() const;
+		int to_abgr64() const;
+		float gray() const;
+		float get_h() const;
+		float get_s() const;
+		float get_v() const;
+		void set_hsv(float p_h, float p_s, float p_v, float p_alpha = 1.0);
+		Color &with_alpha(float p_alpha);
 		Color(float p_r, float p_g, float p_b, float p_a = 1.0);
 	};
 
