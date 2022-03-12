@@ -13,7 +13,6 @@ extern "C" {
 }
 
 #include "core/version.h"
-#include "core/version_hash.gen.h"
 #include "common/gd_core.h"
 
 #include <vector>
