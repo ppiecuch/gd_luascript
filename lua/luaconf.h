@@ -34,8 +34,9 @@
 ** ensure that all software connected to Lua will be compiled with the
 ** same configuration.
 */
-/* #define LUA_32BITS */
-
+#if defined(__psp2__) || defined(__3DS__)
+#define LUA_32BITS
+#endif
 
 /*
 @@ LUA_USE_C89 controls the use of non-ISO-C89 features.

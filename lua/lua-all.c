@@ -17385,7 +17385,7 @@ static int l_checkmode (const char *mode) {
 
 #if !defined(l_popen)		/* { */
 
-#if defined(LUA_USE_POSIX)	/* { */
+#if defined(LUA_USE_POSIX) && !defined(__NX__)	/* { */
 
 #define l_popen(L,c,m)		(fflush(NULL), popen(c,m))
 #define l_pclose(L,file)	(pclose(file))
@@ -19424,7 +19424,7 @@ static time_t l_checktime (lua_State *L, int arg) {
 
 
 static int os_execute (lua_State *L) {
-#ifdef IPHONE_ENABLED
+#if defined(IPHONE_ENABLED) || defined(__NX__)
   lua_pushboolean(L, 0);
   return 1;
 #else
