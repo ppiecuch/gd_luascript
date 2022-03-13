@@ -10,7 +10,7 @@
 #ifdef __APPLE__
 #define LUA_USE_MACOSX
 #endif
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__NX__)
 #define LUA_USE_POSIX
 #endif
 
@@ -17611,7 +17611,11 @@ static int io_popen (lua_State *L) {
 
 static int io_tmpfile (lua_State *L) {
   LStream *p = newfile(L);
+#ifdef __NX__
+  p->f = NULL; errno = ENOSYS;
+#else
   p->f = tmpfile();
+#endif
   return (p->f == NULL) ? luaL_fileresult(L, 0, NULL) : 1;
 }
 
