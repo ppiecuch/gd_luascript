@@ -3,8 +3,8 @@
 
 #include "core/reference.h"
 #include "core/bind/core_bind.h"
-#include "scene/main/node.h"
-#include "./scene/2d/canvas_item.h"
+#include "scene/2d/node_2d.h"
+#include "scene/2d/canvas_item.h"
 
 #include "lua/lua.h"
 
@@ -39,7 +39,7 @@ public:
 
 	Variant pull_variant(String name);
 	Variant get_variant(int index = -1);
-	Variant call_function(String function_name, Array args, bool protected_call = true, Object* callback_caller = nullptr, String callback = String());
+	Variant call_function(String function_name, Array args = Array(), bool protected_call = true, Object* callback_caller = nullptr, String callback = String());
 
 	// Lua functions
 	static void line_hook(lua_State *L, lua_Debug *ar);
@@ -49,13 +49,22 @@ public:
 	~GdLua();
 };
 
-class GdLuaInstance : public Node {
-	GDCLASS(GdLuaInstance, Node);
+class GdLuaInstance : public Node2D {
+	GDCLASS(GdLuaInstance, Node2D);
 
+	Size2 view_size;
 	Ref<GdLua> lua;
 	String script_path;
+	bool lua_autorun;
+
+	Dictionary _init;
+	bool _running, _pausing;
+	bool _dirty;
+
+	bool run();
 
 protected:
+	void _notification(int p_what);
 	static void _bind_methods();
 
 public:

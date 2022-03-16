@@ -13,15 +13,24 @@ extern "C" {
 }
 
 #include "core/version.h"
+#include "scene/resources/font.h"
+#include "scene/resources/theme.h"
 #include "common/gd_core.h"
 
 #include <vector>
 
-constexpr const char *__init_func = "gd_init";
-constexpr const char *__tick_func = "gd_tick";
-constexpr const char *__draw_func = "gd_draw";
-constexpr const char *__event_func = "gd_event";
-constexpr const char *__term_func = "gd_term";
+// Callbacks:
+// ----------
+// 1. https://stackoverflow.com/questions/2688040/how-to-callback-a-lua-function-from-a-c-function
+// 2. https://stackoverflow.com/questions/533136/store-a-lua-function
+// 3. https://stackoverflow.com/questions/12441593/lua-accessing-a-tables-keys-and-values
+// 4. https://lua-l.lua.narkive.com/8eZDIxII/return-value-of-lua-dostring
+
+const String __init_func("gd_init");
+const String __tick_func("gd_tick");
+const String __draw_func("gd_draw");
+const String __event_func("gd_event");
+const String __term_func("gd_term");
 
 // Some macros
 #define luapush_int(L, value)    lua_pushinteger(L, value)
@@ -32,20 +41,22 @@ constexpr const char *__term_func = "gd_term";
 #define luapush_opaque_type(L, str)                      luapush_opaque(L, &str, sizeof(str))
 #define luapush_opaque_type_with_metatable(L, str, meta) luapush_opaque_with_metatable(L, &str, sizeof(str), #meta)
 
-#define luaset_global_string(L, name, value) \
+#define luaset_global_string(L, name, value) { \
 	lua_pushstring(L, value); \
-	lua_setglobal(L, name)
+	lua_setglobal(L, name); \
+}
 
-#define luaset_global_bool(L, name, value) \
+#define luaset_global_bool(L, name, value) { \
 	lua_pushboolean(L, value); \
-	lua_setglobal(L, name)
+	lua_setglobal(L, name); \
+}
 
-static void luapush_opaque(lua_State* L, void *ptr, size_t size) {
+static _FORCE_INLINE_ void luapush_opaque(lua_State* L, void *ptr, size_t size) {
 	void *ud = lua_newuserdata(L, size);
 	memcpy(ud, ptr, size);
 }
 
-static void luapush_opaque_with_metatable(lua_State* L, void *ptr, size_t size, const char *metatable_name) {
+static _FORCE_INLINE_ void luapush_opaque_with_metatable(lua_State* L, void *ptr, size_t size, const char *metatable_name) {
 	void *ud = lua_newuserdata(L, size);
 	memcpy(ud, ptr, size);
 	luaL_setmetatable(L, metatable_name);
@@ -161,7 +172,12 @@ void GdLua::expose_function(Object *instance, String function, String name) {
 // call a Lua function from GDScript
 Variant GdLua::call_function(String function_name, Array args, bool protected_call, Object* callback_caller, String callback) {
 	Variant toReturn;
-	int stack_size = lua_gettop(state);
+#ifdef DEBUG_ENABLED
+	const int stack_size = lua_gettop(state);
+	if (stack_size <= 0) {
+		WARN_PRINT("Empty stack during call_function.");
+	}
+#endif
 	// put global function name on stack
 	lua_getglobal(state, function_name.ascii().get_data());
 	// push args
@@ -169,12 +185,12 @@ Variant GdLua::call_function(String function_name, Array args, bool protected_ca
 		push_variant(args[i]);
 	}
 	if ( protected_call ) {
-		int ret = lua_pcall(state,args.size(), 1 , 0);
+		int ret = lua_pcall(state, args.size(), 1 , 0);
 		if( ret != LUA_OK ) {
 			// Default error handling:
 			if ( callback_caller == nullptr || callback == String() ) {
-				print_error( vformat("Error during \"GdLua::callFunction\" on Lua function \"%s\": ",function_name));
-				handle_error( state , ret );
+				print_error(vformat("Error during \"GdLua::call_function\" on Lua function \"%s\": ", function_name));
+				handle_error(state, ret);
 			} else {
 				// Custom error handling:
 				ScriptInstance *scriptInstance = callback_caller->get_script_instance();
@@ -220,7 +236,7 @@ void GdLua::run_lua(lua_State *L, String code, bool protected_call, Object* call
 	*executing = true;
 	if (protected_call) {
 		int ret = luaL_dostring(L, code.ascii().get_data());
-		if( ret != LUA_OK ) {
+		if (ret != LUA_OK) {
 			// Default error handling:
 			if (callback_caller == nullptr || callback == String()) {
 				handle_error(L, ret);
@@ -247,7 +263,7 @@ bool GdLua::push_variant(Variant var) {
 			break;
 		case Variant::Type::STRING:
 			str = (var.operator String().c_str());
-			lua_pushstring(state, std::string( str.begin(), str.end() ).c_str());
+			lua_pushstring(state, std::string(str.begin(), str.end() ).c_str());
 			break;
 		case Variant::Type::INT:
 			lua_pushinteger(state, (int64_t)var);
@@ -279,7 +295,7 @@ bool GdLua::push_variant(Variant var) {
 		}
 		case Variant::Type::DICTIONARY:
 			lua_newtable(state);
-			for(int i = 0; i < ((Dictionary)var).size(); i++) {
+			for (int i = 0; i < ((Dictionary)var).size(); i++) {
 				Variant key = ((Dictionary)var).keys()[i];
 				Variant value = ((Dictionary)var)[key];
 				push_variant(key);
@@ -319,11 +335,11 @@ bool GdLua::push_variant(Variant var) {
 	return true;
 }
 
-// Call pushVariant() and set it to a global name
+// Call push_variant() and set it to a global name
 bool GdLua::push_global_variant(Variant var, String name) {
 	if (push_variant(var)) {
 		std::wstring str = name.c_str();
-		lua_setglobal(state,std::string( str.begin(), str.end() ).c_str());
+		lua_setglobal(state, std::string(str.begin(), str.end()).c_str());
 		return true;
 	}
 	return false;
@@ -331,14 +347,16 @@ bool GdLua::push_global_variant(Variant var, String name) {
 
 // Pull a global variant from Lua to GDScript
 Variant GdLua::pull_variant(String name) {
-	int type = lua_getglobal(state, name.ascii().get_data());
+	lua_getglobal(state, name.ascii().get_data());
 	Variant val = get_variant(1);
 	lua_pop(state, 1);
 	return val;
 }
+
 // get a value at the given index and return as a variant
 Variant GdLua::get_variant(int index) {
 	Variant result;
+	ERR_FAIL_COND_V(lua_gettop(state) == 0, Variant());
 	int type = lua_type(state, index);
 	switch (type) {
 		case LUA_TSTRING:
@@ -355,8 +373,8 @@ Variant GdLua::get_variant(int index) {
 			break;
 		case LUA_TTABLE: {
 			Dictionary dict;
-			lua_pushnil(state);  /* first key */
-			while (lua_next( state , (index<0)?(index-1):(index)  ) != 0) {
+			lua_pushnil(state); // first key
+			while (lua_next(state , (index<0) ? (index-1) : (index)) != 0) {
 				Variant key = get_variant(-2);
 				Variant value = get_variant(-1);
 				dict[key] = value;
@@ -505,14 +523,101 @@ String GdLuaInstance::get_script_path() const {
 	return script_path;
 }
 
+bool GdLuaInstance::run() {
+	if (!script_path.empty()) {
+		lua->do_file(script_path); // build callbacks table
+		_init = lua->get_variant();
+		if (_init.empty()) {
+			WARN_PRINT("Missing callbacks/interface. Cannot start.");
+		}
+	} else {
+		_running = true;
+	}
+	if (_running) {
+		auto r = lua->call_function(__init_func); // call init functions
+	}
+	return _running;
+}
+
+void GdLuaInstance::_notification(int p_what) {
+	static Color white = Color::named("white");
+	switch (p_what) {
+		case NOTIFICATION_ENTER_TREE: {
+			set_process(true);
+			if (!Engine::get_singleton()->is_editor_hint()) {
+				set_process_input(is_visible_in_tree());
+			}
+		} break;
+		case NOTIFICATION_EXIT_TREE: {
+			set_process(false);
+			set_process_input(false);
+			if (_running) {
+				lua->call_function(__term_func);
+				_running = false;
+			}
+		} break;
+		case NOTIFICATION_DRAW: {
+			if (_running) {
+				lua->call_function(__draw_func); // call draw function
+			} else {
+				// not active indicator
+				draw_rect(Rect2(Point2(), view_size), white, false);
+				draw_line(Point2(), view_size, white);
+				draw_line(Point2(0, view_size.height), Point2(view_size.width, 0), white);
+				const String msg = "Not running";
+				Ref<Font> default_font = Theme::get_default()->get_font("_", "_");
+				const Size2 msg_size = default_font->get_string_size(msg);
+				if (view_size >  msg_size) {
+					draw_string(default_font, (view_size - msg_size) / 2, msg);
+				}
+			}
+		} break;
+		case NOTIFICATION_READY: {
+			if (!Engine::get_singleton()->is_editor_hint()) {
+				if (lua_autorun) {
+					run();
+				}
+			}
+		} break;
+		case NOTIFICATION_PROCESS: {
+			if (_running && !_pausing) {
+				const real_t delta = get_process_delta_time();
+				if (lua->call_function(__tick_func, array(delta))) { // call tick function
+					update();
+				}
+			}
+		} break;
+		case NOTIFICATION_VISIBILITY_CHANGED: {
+			if (!Engine::get_singleton()->is_editor_hint()) {
+				set_process_input(is_visible_in_tree());
+			}
+		} break;
+		case NOTIFICATION_PAUSED: {
+			_pausing = true;
+		} break;
+		case NOTIFICATION_UNPAUSED: {
+			_pausing = false;
+		} break;
+	}
+}
+
 void GdLuaInstance::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_script_path"), &GdLuaInstance::set_script_path);
 	ClassDB::bind_method(D_METHOD("get_script_path"), &GdLuaInstance::get_script_path);
 
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "script_path", PROPERTY_HINT_FILE, "*.lua"), "set_script_path", "get_script_path");
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "view_size"), "set_view_size", "get_view_size");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autorun"), "set_autorun", "is_autorun");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "init_script_path", PROPERTY_HINT_FILE, "*.lua"), "set_script_path", "get_script_path");
 }
 
 GdLuaInstance::GdLuaInstance() {
+	_running = false;
+	_pausing = false;
+	_dirty = false;
+
+	view_size = Size2(640, 480);
+	lua_autorun = false;
+
 	lua = newref(GdLua);
 }
 

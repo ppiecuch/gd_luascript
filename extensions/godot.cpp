@@ -13,6 +13,11 @@ struct lua_Constant {
 	int  value;
 };
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+
 // Check the number of arguments on the Lua stack
 static int bad_args(lua_State *L, int n, char const *name) {
 	if(lua_gettop(L) != n) {
@@ -57,6 +62,10 @@ static void unsupported_function(lua_State *L, char const *name) {
 	lua_concat(L, 2);
 	lua_error(L);
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 extern "C" int tolua_godot_open (lua_State *L);
 extern "C" int luaopen_godot (lua_State *L);
