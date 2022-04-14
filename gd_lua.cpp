@@ -523,6 +523,22 @@ String GdLuaInstance::get_script_path() const {
 	return script_path;
 }
 
+void GdLuaInstance::set_view_size(const Size2 &p_view_size) {
+	view_size = p_view_size;
+}
+
+Size2 GdLuaInstance::get_view_size() const {
+	return view_size;
+}
+
+void GdLuaInstance::set_autorun(const bool &p_autorun) {
+	lua_autorun = p_autorun;
+}
+
+bool GdLuaInstance::is_autorun() const {
+	return lua_autorun;
+}
+
 bool GdLuaInstance::run() {
 	if (!script_path.empty()) {
 		lua->do_file(script_path); // build callbacks table
@@ -604,6 +620,10 @@ void GdLuaInstance::_notification(int p_what) {
 void GdLuaInstance::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_script_path"), &GdLuaInstance::set_script_path);
 	ClassDB::bind_method(D_METHOD("get_script_path"), &GdLuaInstance::get_script_path);
+	ClassDB::bind_method(D_METHOD("set_autorun"), &GdLuaInstance::set_autorun);
+	ClassDB::bind_method(D_METHOD("is_autorun"), &GdLuaInstance::is_autorun);
+	ClassDB::bind_method(D_METHOD("set_view_size"), &GdLuaInstance::set_view_size);
+	ClassDB::bind_method(D_METHOD("get_view_size"), &GdLuaInstance::get_view_size);
 
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "view_size"), "set_view_size", "get_view_size");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autorun"), "set_autorun", "is_autorun");

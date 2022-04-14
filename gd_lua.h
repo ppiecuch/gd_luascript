@@ -71,6 +71,12 @@ public:
 	void set_script_path(const String &p_script_path);
 	String get_script_path() const;
 
+	void set_view_size(const Size2 &p_view_size);
+	Size2 get_view_size() const;
+
+	void set_autorun(const bool &p_autorun);
+	bool is_autorun() const;
+
 	GdLuaInstance();
 	~GdLuaInstance();
 };
