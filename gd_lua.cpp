@@ -51,6 +51,11 @@ const String __term_func("gd_term");
 	lua_setglobal(L, name); \
 }
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+
 static _FORCE_INLINE_ void luapush_opaque(lua_State* L, void *ptr, size_t size) {
 	void *ud = lua_newuserdata(L, size);
 	memcpy(ud, ptr, size);
@@ -61,6 +66,10 @@ static _FORCE_INLINE_ void luapush_opaque_with_metatable(lua_State* L, void *ptr
 	memcpy(ud, ptr, size);
 	luaL_setmetatable(L, metatable_name);
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 static String get_full_version_string() {
 	static String _version;
