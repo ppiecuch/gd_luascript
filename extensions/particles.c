@@ -27,42 +27,43 @@ typedef struct {
 	particle_t particles[PARTICLE_COUNT];
 } emitter_t;
 
-static inline void draw_particle(emitter_t *emitter, particle_t *particle) {
+typedef struct {
+	float alpha;
+	float p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y;
+} quad_t;
+
+static inline void draw_particle(emitter_t *emitter, particle_t *particle, quad_t *quad) {
 	if (particle->life) {
-		float dx = emitter->width/2 * particle->scale;
-		float dy = emitter->height/2 * particle->scale;
-#if 0
-		glColor4f(1, 1, 1, (float)particle->life / emitter->life);
-		glTexCoord2d(0, 1);
-		glVertex2f(particle->x - dx, particle->y - dy);
-		glTexCoord2d(1, 1);
-		glVertex2f(particle->x + dx, particle->y - dy);
-		glTexCoord2d(1, 0);
-		glVertex2f(particle->x + dx, particle->y + dy);
-		glTexCoord2d(0, 0);
-		glVertex2f(particle->x - dx, particle->y + dy);
-#endif
+		const float dx = emitter->width/2 * particle->scale;
+		const float dy = emitter->height/2 * particle->scale;
+		quad->alpha = (float)particle->life / emitter->life;
+		quad->p1x = particle->x - dx;
+		quad->p1y = particle->y - dy;
+		quad->p2x = particle->x + dx;
+		quad->p2y = particle->y - dy;
+		quad->p3x = particle->x + dx;
+		quad->p3y = particle->y + dy;
+		quad->p4x = particle->x - dx;
+		quad->p4y = particle->y + dy;
 	}
 }
 
 static int emitter__draw(lua_State *L) {
 	emitter_t *emitter = luaL_checkudata(L, 1, "particles.emitter");
-#if 0
+	quad_t quad;
 	for (int i = emitter->next; i != PARTICLE_COUNT; i++) {
-		draw_particle(emitter, &emitter->particles[i]);
+		draw_particle(emitter, &emitter->particles[i], &quad);
 	}
 	for (int i = 0; i != emitter->next; i++) {
-		draw_particle(emitter, &emitter->particles[i]);
+		draw_particle(emitter, &emitter->particles[i], &quad);
 	}
-#endif
 	return 0;
 }
 
 static int emitter__update(lua_State *L) {
 	emitter_t *emitter = luaL_checkudata(L, 1, emitter_udata);
 
-	particle_t *particle;
-	for (particle = emitter->particles;
+	for (particle_t *particle = emitter->particles;
 		particle != emitter->particles + PARTICLE_COUNT;
 		particle++) {
 		if (particle->life) {
