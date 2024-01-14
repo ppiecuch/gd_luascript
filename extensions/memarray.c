@@ -158,8 +158,7 @@ static int Lrealloc(lua_State * L) {
 
 /* memarray, 'type', n, [address] */
 static int L__call(lua_State * L) {
-	memarray_t *m;
-	m = memarray_new(L);
+	memarray_t *m = memarray_new(L);
 	lua_replace(L, 1);
 	return Lrealloc(L);
 }

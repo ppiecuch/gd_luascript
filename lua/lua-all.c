@@ -22024,5 +22024,6 @@ LUALIB_API void luaL_openlibs (lua_State *L) {
     luaL_requiref(L, lib->name, lib->func, 1);
     lua_pop(L, 1);  /* remove lib */
   }
+  (void)luaP_opnames; /* unused */
 }
 

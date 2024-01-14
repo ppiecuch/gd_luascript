@@ -27,12 +27,8 @@ typedef struct {
 	particle_t particles[PARTICLE_COUNT];
 } emitter_t;
 
-#ifndef GL_QUADS
-# define GL_QUADS GL_TRIANGLE_FAN
-#endif
-
 static inline void draw_particle(emitter_t *emitter, particle_t *particle) {
-	if(particle->life) {
+	if (particle->life) {
 		float dx = emitter->width/2 * particle->scale;
 		float dy = emitter->height/2 * particle->scale;
 #if 0
@@ -52,18 +48,12 @@ static inline void draw_particle(emitter_t *emitter, particle_t *particle) {
 static int emitter__draw(lua_State *L) {
 	emitter_t *emitter = luaL_checkudata(L, 1, "particles.emitter");
 #if 0
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, emitter->texture);
-	glBegin(GL_QUADS);
-	for(int i = emitter->next; i != PARTICLE_COUNT; i++)
+	for (int i = emitter->next; i != PARTICLE_COUNT; i++) {
 		draw_particle(emitter, &emitter->particles[i]);
-	for(int i = 0; i != emitter->next; i++)
+	}
+	for (int i = 0; i != emitter->next; i++) {
 		draw_particle(emitter, &emitter->particles[i]);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-
-	glColor3f(1, 1, 1);
+	}
 #endif
 	return 0;
 }
@@ -72,10 +62,10 @@ static int emitter__update(lua_State *L) {
 	emitter_t *emitter = luaL_checkudata(L, 1, emitter_udata);
 
 	particle_t *particle;
-	for(particle = emitter->particles;
+	for (particle = emitter->particles;
 		particle != emitter->particles + PARTICLE_COUNT;
 		particle++) {
-		if(particle->life) {
+		if (particle->life) {
 			particle->life--;
 			particle->x += particle->xvel;
 			particle->y += particle->yvel;
@@ -130,8 +120,7 @@ static int particles__make_emitter(lua_State *L) {
 	emitter->delta_scale = delta_scale;
 
 	emitter->next = 0;
-	int i;
-	for(i = 0; i < PARTICLE_COUNT; i++) {
+	for (int i = 0; i < PARTICLE_COUNT; i++) {
 		emitter->particles[i].life = 0;
 	}
 
